@@ -35,6 +35,8 @@
   "direct": "直连",
   "script": "脚本",
   "locate": "当前节点",
+  "Enable Hidden Invalid Network": "隐藏无效节点",
+  "Disable Hidden Invalid Network": "展示所有节点",
   "Delay check": "延迟测试",
   "Sort by default": "默认排序",
   "Sort by delay": "按延迟排序",
@@ -592,6 +594,6 @@
   "Disallowed ISP": "不允许的 ISP",
   "Originals Only": "仅限原创",
   "No (IP Banned By Disney+)": "不支持（IP被Disney+禁止）",
-  "Unsupported Country": "不支持的国家",
+  "Unsupported Country/Region": "不支持的国家/地区",
   "Failed (Network Connection)": "测试失败（网络连接问题）"
 }

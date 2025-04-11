@@ -7,6 +7,7 @@ import {
   DEFAULT_STATE,
   type HeadState,
 } from "./use-head-state";
+<<<<<<< HEAD
 import { useAppData } from "@/providers/app-data-provider";
 
 // 定义代理项接口
@@ -47,6 +48,7 @@ type ProxyGroup = {
   testUrl?: string;
   provider?: string;
 };
+import { truncate } from "lodash-es";
 
 export interface IRenderItem {
   // 组 | head | item | empty | item col
@@ -126,6 +128,7 @@ export const useRenderList = (mode: string) => {
 
     const retList = renderGroups.flatMap((group: ProxyGroup) => {
       const headState = headStates[group.name] || DEFAULT_STATE;
+      const hiddenInvalidNetwork = headState.hiddenInvalidNetwork;
       const ret: IRenderItem[] = [
         {
           type: 0,
@@ -136,6 +139,55 @@ export const useRenderList = (mode: string) => {
           testUrl: group.testUrl,
         },
       ];
+
+      // Invalid filter network
+      if (hiddenInvalidNetwork) {
+        let proxys = group.all.filter((item) => {
+          if (item.all) {
+            return false;
+          }
+
+          if (item.history) {
+            const history = item.history;
+            let min = Math.min(3, history.length);
+            let recentHistory = history.slice(0, min);
+            let hasInvalidNetwork =
+              recentHistory.filter((item) => item.delay == 0).length > 0;
+            if (hasInvalidNetwork) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+        group.all = proxys;
+      }
+
+      // Invalid filter network
+      if (hiddenInvalidNetwork) {
+        let proxys = group.all.filter((item) => {
+          if (item.all) {
+            return true;
+          }
+
+          if (item.history) {
+            const history = item.history;
+            let min = Math.min(3, history.length);
+            let recentHistory = history.slice(
+              history.length - min,
+              history.length,
+            );
+            let hasInvalidNetwork =
+              recentHistory.filter((item) => item.delay == 0).length > 0;
+            if (hasInvalidNetwork) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+        group.all = proxys;
+      }
 
       if (headState?.open || !useRule) {
         const proxies = filterSort(
