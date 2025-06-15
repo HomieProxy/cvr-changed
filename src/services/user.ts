@@ -1,6 +1,6 @@
 // User-related API helpers
 
-import { getAxios as getAuthAxios } from "./auth";
+import { getAuthAxios } from "./auth";
 
 interface ApiResponse<T> {
   status: string;
