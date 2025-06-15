@@ -15,7 +15,7 @@ const UserInfoPage = () => {
   const { t } = useTranslation();
   const { userInfo, mutateUserInfo } = useUserInfo();
   const { data: subResp } = useUserSubscribe();
-  const subscribe = subResp?.data;
+  const subscribe = subResp?.data.data;
 
   const [remindExpire, setRemindExpire] = useState<number>(0);
   const [remindTraffic, setRemindTraffic] = useState<number>(0);

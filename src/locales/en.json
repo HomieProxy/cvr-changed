@@ -614,5 +614,20 @@
   "Originals Only": "Originals Only",
   "No (IP Banned By Disney+)": "No (IP Banned By Disney+)",
   "Unsupported Country/Region": "Unsupported Country/Region",
-  "Failed (Network Connection)": "Failed (Network Connection)"
+  "Failed (Network Connection)": "Failed (Network Connection)",
+  "Label-UserInfo": "User Info",
+  "User Info": "User Info",
+  "Account": "Account",
+  "Current Plan": "Current Plan",
+  "Expires": "Expires",
+  "Traffic Resets On": "Traffic Resets On",
+  "Data Usage": "Data Usage",
+  "Quick Invite Codes": "Quick Invite Codes",
+  "Update Settings": "Update Settings",
+  "Change Password": "Change Password",
+  "Password Updated": "Password Updated",
+  "Remind Expire": "Remind Expire",
+  "Remind Traffic": "Remind Traffic",
+  "Current Password": "Current Password",
+  "New Password": "New Password"
 }
