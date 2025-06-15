@@ -78,8 +78,8 @@ export const generateInviteCode = async () => {
 
 export const importSubscribeProfile = async () => {
   try {
-    const { data } = await fetchUserSubscribe();
-    const url = data.subscribe_url;
+    const res = await fetchUserSubscribe();
+    const url = res.data.subscribe_url;
     await importProfile(url);
     mutate("getProfiles");
     showNotice("success", i18next.t("Import Subscription Successful"));
