@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { getOssBaseUrl } from "./domain_service";
 
 interface ApiResponse<T> {
   status: string;
@@ -29,21 +30,11 @@ interface LoginPayload {
 const TOKEN_KEY = "auth_token";
 const BEARER_KEY = "auth_bearer";
 
-let apiBaseUrlPromise: Promise<string> | null = null;
-async function getApiBaseUrl(): Promise<string> {
-  if (!apiBaseUrlPromise) {
-    apiBaseUrlPromise = axios
-      .get<ApiResponse<any>>("/api-proxy/globalize/v1/guest/comm/config")
-      .then((r) => (r.data as any).app_url || r.data.data?.app_url || "");
-  }
-  return apiBaseUrlPromise;
-}
-
 let instancePromise: Promise<AxiosInstance> | null = null;
 async function getAxios(): Promise<AxiosInstance> {
   if (!instancePromise) {
     instancePromise = (async () => {
-      const baseURL = await getApiBaseUrl();
+      const baseURL = await getOssBaseUrl();
       const authHeader = getBearerToken();
       const ins = axios.create({
         baseURL,
