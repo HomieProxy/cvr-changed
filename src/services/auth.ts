@@ -95,3 +95,5 @@ export async function signup(
 export async function logout() {
   clearTokens();
 }
+
+export { getAxios as getAuthAxios };
