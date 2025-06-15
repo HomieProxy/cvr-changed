@@ -2,6 +2,7 @@ import LogsPage from "./logs";
 import ProxiesPage from "./proxies";
 import ProfilesPage from "./profiles";
 import SettingsPage from "./settings";
+import UserInfoPage from "./user-info";
 import ConnectionsPage from "./connections";
 import RulesPage from "./rules";
 import HomePage from "./home";
@@ -27,6 +28,7 @@ import SubjectRoundedIcon from "@mui/icons-material/SubjectRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import LockOpenRoundedIcon from "@mui/icons-material/LockOpenRounded";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
 
@@ -78,6 +80,12 @@ export const routers = [
     path: "/settings",
     icon: [<SettingsRoundedIcon />, <SettingsSvg />],
     element: <SettingsPage />,
+  },
+  {
+    label: "Label-UserInfo",
+    path: "/user-info",
+    icon: [<AccountCircleRoundedIcon />, <AccountCircleRoundedIcon />],
+    element: <UserInfoPage />,
   },
 ].map((router) => ({
   ...router,
