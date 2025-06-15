@@ -6,6 +6,8 @@ import ConnectionsPage from "./connections";
 import RulesPage from "./rules";
 import HomePage from "./home";
 import UnlockPage from "./unlock";
+import LoginPage from "./login";
+import SignupPage from "./signup";
 import { BaseErrorBoundary } from "@/components/base";
 
 import HomeSvg from "@/assets/image/itemicon/home.svg?react";
@@ -25,6 +27,8 @@ import SubjectRoundedIcon from "@mui/icons-material/SubjectRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import LockOpenRoundedIcon from "@mui/icons-material/LockOpenRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
 
 export const routers = [
   {
@@ -74,6 +78,26 @@ export const routers = [
     path: "/settings",
     icon: [<SettingsRoundedIcon />, <SettingsSvg />],
     element: <SettingsPage />,
+  },
+].map((router) => ({
+  ...router,
+  element: (
+    <BaseErrorBoundary key={router.label}>{router.element}</BaseErrorBoundary>
+  ),
+}));
+
+export const authRouters = [
+  {
+    label: "Label-Login",
+    path: "/login",
+    icon: [<PersonRoundedIcon />, <PersonRoundedIcon />],
+    element: <LoginPage />,
+  },
+  {
+    label: "Label-Signup",
+    path: "/signup",
+    icon: [<PersonAddRoundedIcon />, <PersonAddRoundedIcon />],
+    element: <SignupPage />,
   },
 ].map((router) => ({
   ...router,

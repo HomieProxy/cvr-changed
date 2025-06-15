@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useRoutes, useNavigate } from "react-router-dom";
 import { List, Paper, ThemeProvider, SvgIcon } from "@mui/material";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { routers } from "./_routers";
+import { routers, authRouters } from "./_routers";
 import { getAxios } from "@/services/api";
 import { useVerge } from "@/hooks/use-verge";
 import LogoSvg from "@/assets/image/logo.svg?react";
@@ -30,6 +30,7 @@ import { initGlobalLogService } from "@/services/global-log-service";
 import { invoke } from "@tauri-apps/api/core";
 import { showNotice } from "@/services/noticeService";
 import { NoticeManager } from "@/components/base/NoticeManager";
+import { useAuth } from "@/hooks/use-auth";
 
 const appWindow = getCurrentWebviewWindow();
 export let portableFlag = false;
@@ -157,7 +158,8 @@ const Layout = () => {
   const { language, start_page } = verge ?? {};
   const navigate = useNavigate();
   const location = useLocation();
-  const routersEles = useRoutes(routers);
+  const { isLoggedIn } = useAuth();
+  const routersEles = useRoutes(isLoggedIn ? routers : authRouters);
   const { addListener, setupCloseListener } = useListen();
   const initRef = useRef(false);
   const [themeReady, setThemeReady] = useState(false);
@@ -391,6 +393,17 @@ const Layout = () => {
           color: mode === "light" ? "#333" : "#fff",
         }}
       ></div>
+    );
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <SWRConfig value={{ errorRetryCount: 3 }}>
+        <ThemeProvider theme={theme}>
+          <NoticeManager />
+          {routersEles}
+        </ThemeProvider>
+      </SWRConfig>
     );
   }
 
