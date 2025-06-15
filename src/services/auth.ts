@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import Cookies from "js-cookie";
 import { getOssBaseUrl } from "./domain_service";
 
 interface ApiResponse<T> {
@@ -49,22 +50,22 @@ async function getAxios(): Promise<AxiosInstance> {
 }
 
 function saveTokens(token: string, bearer: string) {
-  localStorage.setItem(TOKEN_KEY, token);
-  localStorage.setItem(BEARER_KEY, bearer);
+  Cookies.set(TOKEN_KEY, token, { expires: 30 });
+  Cookies.set(BEARER_KEY, bearer, { expires: 30 });
   instancePromise = null;
 }
 
-export function getShortToken() {
-  return localStorage.getItem(TOKEN_KEY);
+export function getShortToken(): string | null {
+  return Cookies.get(TOKEN_KEY) ?? null;
 }
 
-export function getBearerToken() {
-  return localStorage.getItem(BEARER_KEY);
+export function getBearerToken(): string | null {
+  return Cookies.get(BEARER_KEY) ?? null;
 }
 
 export function clearTokens() {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(BEARER_KEY);
+  Cookies.remove(TOKEN_KEY);
+  Cookies.remove(BEARER_KEY);
   instancePromise = null;
 }
 
