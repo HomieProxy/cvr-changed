@@ -453,5 +453,7 @@
   "TUN requires Service Mode": "حالت تونل‌زنی نیاز به سرویس دارد",
   "Install Service": "نصب سرویس",
   "Installing Service...": "در حال نصب سرویس...",
-  "Service Administrator Prompt": "Clash Verge برای نصب مجدد سرویس سیستم به امتیازات مدیر نیاز دارد"
+  "Service Administrator Prompt": "Clash Verge برای نصب مجدد سرویس سیستم به امتیازات مدیر نیاز دارد",
+  "Label-UserInfo": "User Info",
+  "Label-Logout": "Logout"
 }

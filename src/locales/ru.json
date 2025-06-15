@@ -581,5 +581,7 @@
   "Originals Only": "Только Originals",
   "No (IP Banned By Disney+)": "Нет (IP забанен Disney+)",
   "Unsupported Country/Region": "Страна/регион не поддерживается",
-  "Failed (Network Connection)": "Ошибка подключения"
+  "Failed (Network Connection)": "Ошибка подключения",
+  "Label-UserInfo": "User Info",
+  "Label-Logout": "Logout"
 }

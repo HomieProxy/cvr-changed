@@ -629,5 +629,6 @@
   "Remind Expire": "Remind Expire",
   "Remind Traffic": "Remind Traffic",
   "Current Password": "Current Password",
-  "New Password": "New Password"
+  "New Password": "New Password",
+  "Label-Logout": "Logout"
 }
