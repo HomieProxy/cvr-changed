@@ -157,11 +157,14 @@ export const changePassword = async (payload: ChangePasswordRequest) => {
   );
 };
 
-export const fetchUserSubscribe = async () => {
+export const fetchUserSubscribe = async (): Promise<
+  ApiResponse<UserSubscribeData>
+> => {
   const ins = await getAuthAxios();
-  return ins.get<ApiResponse<UserSubscribeData>>(
+  const res = await ins.get<ApiResponse<UserSubscribeData>>(
     "/globalize/v1/user/getSubscribe",
   );
+  return res as unknown as ApiResponse<UserSubscribeData>;
 };
 
 export const fetchTelegramBotInfo = async () => {

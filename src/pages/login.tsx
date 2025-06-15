@@ -5,6 +5,7 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { BasePage } from "@/components/base";
 import { showNotice } from "@/services/noticeService";
 import { useAuth } from "@/hooks/use-auth";
+import { importSubscribeProfile } from "@/hooks/use-user";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       await login({ email, password });
+      await importSubscribeProfile();
       showNotice("success", t("Login Successful"));
       navigate("/");
     } catch (err: any) {
