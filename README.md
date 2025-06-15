@@ -92,6 +92,12 @@ pnpm run check
 pnpm dev
 ```
 
+## build-all Workflow
+
+The repository provides a **build-all.yml** workflow that compiles packages for every platform.
+You can run it manually from the **Actions** tab by selecting **build-all** and clicking **Run workflow**.
+macOS artifacts produced by this workflow are unsigned and may require manual notarization before distribution.
+
 ## Contributions
 
 Issue and PR welcome!
