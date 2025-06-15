@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import {
   fetchUserCommConfig,
   fetchUserInfo,
@@ -18,6 +18,9 @@ import {
   ChangePasswordRequest,
   TransferRequest,
 } from "@/services/user";
+import { importProfile } from "@/services/cmds";
+import { showNotice } from "@/services/noticeService";
+import i18next from "i18next";
 
 export const useUserInfo = () => {
   const { data, mutate } = useSWR("userInfo", fetchUserInfo);
@@ -71,6 +74,18 @@ export const sendTransferCommission = async (payload: TransferRequest) => {
 
 export const generateInviteCode = async () => {
   await createInviteCode();
+};
+
+export const importSubscribeProfile = async () => {
+  try {
+    const { data } = await fetchUserSubscribe();
+    const url = data.subscribe_url;
+    await importProfile(url);
+    mutate("getProfiles");
+    showNotice("success", i18next.t("Import Subscription Successful"));
+  } catch (err: any) {
+    showNotice("error", err?.message || err.toString());
+  }
 };
 
 export const useUser = () => {
