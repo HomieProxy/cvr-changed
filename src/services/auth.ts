@@ -34,7 +34,7 @@ async function getApiBaseUrl(): Promise<string> {
   if (!apiBaseUrlPromise) {
     apiBaseUrlPromise = axios
       .get<ApiResponse<any>>("/api-proxy/globalize/v1/guest/comm/config")
-      .then((r) => r.data.app_url || r.data.data?.app_url || "");
+      .then((r) => (r.data as any).app_url || r.data.data?.app_url || "");
   }
   return apiBaseUrlPromise;
 }
@@ -79,10 +79,10 @@ export function clearTokens() {
 
 export async function login(payload: LoginPayload): Promise<LoginResponseData> {
   const ins = await getAxios();
-  const res = await ins.post<ApiResponse<LoginResponseData>>(
-    "/globalize/v1/passport/auth/login",
-    payload,
-  );
+  const res = await ins.post<
+    ApiResponse<LoginResponseData>,
+    ApiResponse<LoginResponseData>
+  >("/globalize/v1/passport/auth/login", payload);
   const data = res.data;
   saveTokens(data.token, data.auth_data);
   return data;
@@ -92,10 +92,10 @@ export async function signup(
   payload: SignupPayload,
 ): Promise<LoginResponseData> {
   const ins = await getAxios();
-  const res = await ins.post<ApiResponse<LoginResponseData>>(
-    "/globalize/v1/passport/auth/register",
-    payload,
-  );
+  const res = await ins.post<
+    ApiResponse<LoginResponseData>,
+    ApiResponse<LoginResponseData>
+  >("/globalize/v1/passport/auth/register", payload);
   const data = res.data;
   saveTokens(data.token, data.auth_data);
   return data;
