@@ -2,6 +2,7 @@ name: Codex Build
 
 on:
   workflow_dispatch:
+permissions: write-all
 
 jobs:
   build:
