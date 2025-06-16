@@ -27,7 +27,10 @@ import React from "react";
 import { useListen } from "@/hooks/use-listen";
 import { listen } from "@tauri-apps/api/event";
 import { useClashInfo } from "@/hooks/use-clash";
-import { initGlobalLogService } from "@/services/global-log-service";
+import {
+  initGlobalLogService,
+  useGlobalLogStore,
+} from "@/services/global-log-service";
 import { invoke } from "@tauri-apps/api/core";
 import { showNotice } from "@/services/noticeService";
 import { NoticeManager } from "@/components/base/NoticeManager";
@@ -158,6 +161,7 @@ const Layout = () => {
   const [enableLog] = useEnableLog();
   const { language, start_page } = verge ?? {};
   const navigate = useNavigate();
+  const appendLog = useGlobalLogStore.getState().appendLog;
   const location = useLocation();
   const { isLoggedIn } = useAuth();
   const routersEles = useRoutes(isLoggedIn ? routers : authRouters);
@@ -251,12 +255,22 @@ const Layout = () => {
     console.log("[Layout] 开始执行初始化代码");
     initRef.current = true;
 
+    const logAndNotifyError = (context: string, err: unknown) => {
+      console.error(context, err);
+      appendLog({
+        type: "ui-error",
+        payload: `${context} ${(err as Error).toString()}`,
+        time: dayjs().format("MM-DD HH:mm:ss"),
+      });
+      showNotice("error", `${context}: ${(err as Error).toString()}`);
+    };
+
     const notifyUiStage = async (stage: string) => {
       try {
         console.log(`[Layout] UI加载阶段: ${stage}`);
         await invoke("update_ui_stage", { stage });
       } catch (err) {
-        console.error(`[Layout] 通知UI加载阶段(${stage})失败:`, err);
+        logAndNotifyError(`[Layout] 通知UI加载阶段(${stage})失败`, err);
       }
     };
 
@@ -265,7 +279,7 @@ const Layout = () => {
         console.log("[Layout] 核心组件已加载，通知后端");
         await invoke("update_ui_stage", { stage: "DomReady" });
       } catch (err) {
-        console.error("[Layout] 通知核心组件加载完成失败:", err);
+        logAndNotifyError("[Layout] 通知核心组件加载完成失败", err);
       }
     };
 
@@ -274,7 +288,7 @@ const Layout = () => {
         console.log("[Layout] 所有资源已加载，通知后端");
         await invoke("update_ui_stage", { stage: "ResourcesLoaded" });
       } catch (err) {
-        console.error("[Layout] 通知资源加载完成失败:", err);
+        logAndNotifyError("[Layout] 通知资源加载完成失败", err);
       }
     };
 
@@ -283,7 +297,7 @@ const Layout = () => {
         console.log("[Layout] UI完全准备就绪，通知后端");
         await invoke("notify_ui_ready");
       } catch (err) {
-        console.error("[Layout] 通知UI准备就绪失败:", err);
+        logAndNotifyError("[Layout] 通知UI准备就绪失败", err);
       }
     };
 
@@ -297,7 +311,7 @@ const Layout = () => {
         });
         return unlisten;
       } catch (err) {
-        console.error("[Layout] 监听启动完成事件失败:", err);
+        logAndNotifyError("[Layout] 监听启动完成事件失败", err);
         return () => {};
       }
     };
@@ -336,8 +350,9 @@ const Layout = () => {
         try {
           await notifyUiReady();
         } catch (e) {
-          console.error("[Layout] 通知UI就绪失败:", e);
+          logAndNotifyError("[Layout] 通知UI就绪失败", e);
         }
+        logAndNotifyError("[Layout] 初始化UI流程异常", error);
       }
     };
 
@@ -347,7 +362,9 @@ const Layout = () => {
       const emergencyNotify = async () => {
         try {
           await invoke("notify_ui_ready");
-        } catch (error) {}
+        } catch (error) {
+          logAndNotifyError("[Layout] 紧急通知UI就绪失败", error);
+        }
       };
       emergencyNotify();
     }, 5000);

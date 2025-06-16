@@ -211,7 +211,13 @@ pub fn copy_icon_file(path: String, icon_info: IconInfo) -> CmdResult<String> {
 pub fn notify_ui_ready() -> CmdResult<()> {
     log::info!(target: "app", "前端UI已准备就绪");
     crate::utils::resolve::mark_ui_ready();
-    Ok(())
+    if crate::utils::resolve::is_ui_ready() {
+        Ok(())
+    } else {
+        let err = "Failed to mark UI as ready".to_string();
+        log::error!(target: "app", "{}", err);
+        Err(err)
+    }
 }
 
 /// UI加载阶段
@@ -233,8 +239,13 @@ pub fn update_ui_stage(stage: String) -> CmdResult<()> {
         }
     };
 
-    crate::utils::resolve::update_ui_ready_stage(stage_enum);
-    Ok(())
+    match crate::utils::resolve::update_ui_ready_stage(stage_enum) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            log::error!(target: "app", "更新UI阶段失败: {}", e);
+            Err(e.to_string())
+        }
+    }
 }
 
 /// 重置UI就绪状态
