@@ -61,7 +61,7 @@ const LoginPage = () => {
   };
 
   return (
-    <BasePage title={t("Login")}>
+    <BasePage title={t("Login")} full>
       <Box
         component="form"
         onSubmit={onSubmit}

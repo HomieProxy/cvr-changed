@@ -31,7 +31,7 @@ const SignupPage = () => {
   };
 
   return (
-    <BasePage title={t("Sign Up")}>
+    <BasePage title={t("Sign Up")} full>
       <Box
         component="form"
         onSubmit={onSubmit}
