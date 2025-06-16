@@ -10,7 +10,7 @@ if (!window.ResizeObserver) {
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { ComposeContextProvider } from "foxact/compose-context-provider";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import { BaseErrorBoundary } from "./components/base";
 import Layout from "./pages/_layout";
 import "./services/i18n";
@@ -54,9 +54,9 @@ root.render(
     <ComposeContextProvider contexts={contexts}>
       <BaseErrorBoundary>
         <AppDataProvider>
-          <BrowserRouter>
+          <HashRouter>
             <Layout />
-          </BrowserRouter>
+          </HashRouter>
         </AppDataProvider>
       </BaseErrorBoundary>
     </ComposeContextProvider>
