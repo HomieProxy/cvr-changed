@@ -82,5 +82,12 @@ export async function getOssBaseUrl(): Promise<string> {
 
 export async function switchOssBaseUrl() {
   baseUrlPromise = null;
-  return selectBestOssServer(true);
+  const url = await selectBestOssServer(true);
+  const name = getCurrentOssName();
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("oss-base-url-switched", { detail: { name, url } }),
+    );
+  }
+  return url;
 }

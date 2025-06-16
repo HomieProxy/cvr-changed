@@ -5,7 +5,7 @@ import { SWRConfig, mutate } from "swr";
 import { useEffect, useCallback, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useRoutes, useNavigate } from "react-router-dom";
-import { List, Paper, ThemeProvider, SvgIcon } from "@mui/material";
+import { List, Paper, ThemeProvider, SvgIcon, Typography } from "@mui/material";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { routers, authRouters } from "./_routers";
 import { getAxios } from "@/services/api";
@@ -18,6 +18,7 @@ import { LayoutItem } from "@/components/layout/layout-item";
 import { LayoutTraffic } from "@/components/layout/layout-traffic";
 import { UpdateButton } from "@/components/layout/update-button";
 import { useCustomTheme } from "@/components/layout/use-custom-theme";
+import { getCurrentOssName } from "@/services/domain_service";
 import getSystem from "@/utils/get-system";
 import "dayjs/locale/ru";
 import "dayjs/locale/zh-cn";
@@ -163,10 +164,21 @@ const Layout = () => {
   const { addListener, setupCloseListener } = useListen();
   const initRef = useRef(false);
   const [themeReady, setThemeReady] = useState(false);
+  const [ossName, setOssName] = useState<string | null>(() =>
+    getCurrentOssName(),
+  );
 
   useEffect(() => {
     setThemeReady(true);
   }, [theme]);
+
+  useEffect(() => {
+    const handler = () => {
+      setOssName(getCurrentOssName());
+    };
+    window.addEventListener("oss-base-url-switched", handler);
+    return () => window.removeEventListener("oss-base-url-switched", handler);
+  }, []);
 
   const handleNotice = useCallback(
     (payload: [string, string]) => {
@@ -476,6 +488,9 @@ const Layout = () => {
                 <LogoSvg fill={isDark ? "white" : "black"} />
               </div>
               <UpdateButton className="the-newbtn" />
+              <Typography variant="caption" sx={{ mt: 0.5 }}>
+                {t("Connected Server")}: {ossName ?? "-"}
+              </Typography>
             </div>
 
             <List className="the-menu">
