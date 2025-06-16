@@ -454,5 +454,8 @@
   "Installing Service...": "Memasang Layanan...",
   "Service Administrator Prompt": "Clash Verge memerlukan hak administrator untuk menginstal ulang layanan sistem",
   "Label-UserInfo": "User Info",
-  "Label-Logout": "Logout"
+  "Label-Logout": "Logout",
+  "Welcome Back!": "Welcome Back!",
+  "Sign in to your HomieFroxy account.": "Sign in to your HomieFroxy account.",
+  "Server": "Server"
 }

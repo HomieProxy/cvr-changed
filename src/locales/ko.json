@@ -229,7 +229,6 @@
   "MTU": "MTU",
   "Auto Route": "자동 라우팅",
   "Auto Detect Interface": "인터페이스 자동 감지",
-  "Interface Name": "인터페이스 이름",
   "Endpoint Independent Nat": "엔드포인트 독립 NAT",
   "Include Reserved": "예약된 IP 포함",
   "Enable Default DNS Hijack": "기본 DNS 하이재킹 활성화",
@@ -400,5 +399,8 @@
   "Update Successful": "업데이트 성공",
   "Update Failed": "업데이트 실패",
   "Label-UserInfo": "User Info",
-  "Label-Logout": "Logout"
+  "Label-Logout": "Logout",
+  "Welcome Back!": "Welcome Back!",
+  "Sign in to your HomieFroxy account.": "Sign in to your HomieFroxy account.",
+  "Server": "Server"
 }
