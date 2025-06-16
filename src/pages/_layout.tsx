@@ -164,7 +164,8 @@ const Layout = () => {
   const appendLog = useGlobalLogStore.getState().appendLog;
   const location = useLocation();
   const { isLoggedIn } = useAuth();
-  const routersEles = useRoutes(isLoggedIn ? routers : authRouters);
+  const menuRouters = isLoggedIn ? routers : authRouters;
+  const routersEles = useRoutes(menuRouters);
   const { addListener, setupCloseListener } = useListen();
   const initRef = useRef(false);
   const [themeReady, setThemeReady] = useState(false);
@@ -425,17 +426,6 @@ const Layout = () => {
     );
   }
 
-  if (!isLoggedIn) {
-    return (
-      <SWRConfig value={{ errorRetryCount: 3 }}>
-        <ThemeProvider theme={theme}>
-          <NoticeManager />
-          {routersEles}
-        </ThemeProvider>
-      </SWRConfig>
-    );
-  }
-
   return (
     <SWRConfig value={{ errorRetryCount: 3 }}>
       <ThemeProvider theme={theme}>
@@ -511,7 +501,7 @@ const Layout = () => {
             </div>
 
             <List className="the-menu">
-              {routers.map((router) => (
+              {menuRouters.map((router) => (
                 <LayoutItem
                   key={router.label}
                   to={router.path}
