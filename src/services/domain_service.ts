@@ -3,6 +3,7 @@ export const ossDomain = "https://oss01.980410.xyz/pandaoss.conf.json";
 import axios from "axios";
 
 const CACHE_KEY = "oss_base_url";
+const CACHE_NAME_KEY = "oss_base_name";
 
 export interface OssConfigItem {
   name: string;
@@ -24,20 +25,62 @@ export async function fetchOssConfig(): Promise<OssConfigItem[]> {
   }
 }
 
+export async function testOssUrl(url: string): Promise<number> {
+  const testPath = url.replace(/\/+$/, "") + "/globalize/v1/guest/comm/config";
+  const start = Date.now();
+  try {
+    await axios.get(testPath, { timeout: 3000 });
+    return Date.now() - start;
+  } catch {
+    return Infinity;
+  }
+}
+
 let baseUrlPromise: Promise<string> | null = null;
+
+export async function selectBestOssServer(force = false): Promise<string> {
+  const cachedUrl = localStorage.getItem(CACHE_KEY);
+
+  if (!force && cachedUrl) {
+    const delay = await testOssUrl(cachedUrl);
+    if (delay !== Infinity) {
+      baseUrlPromise = Promise.resolve(cachedUrl);
+      return cachedUrl;
+    }
+  }
+
+  const configs = await fetchOssConfig();
+  if (!configs.length) throw new Error("OSS config is empty");
+
+  const delays = await Promise.all(configs.map((c) => testOssUrl(c.url)));
+  let bestIndex = 0;
+  let bestDelay = delays[0];
+  for (let i = 1; i < delays.length; i++) {
+    if (delays[i] < bestDelay) {
+      bestDelay = delays[i];
+      bestIndex = i;
+    }
+  }
+
+  const { url, name } = configs[bestIndex];
+  localStorage.setItem(CACHE_KEY, url);
+  localStorage.setItem(CACHE_NAME_KEY, name);
+  baseUrlPromise = Promise.resolve(url);
+  return url;
+}
+
+export function getCurrentOssName(): string | null {
+  return localStorage.getItem(CACHE_NAME_KEY);
+}
+
 export async function getOssBaseUrl(): Promise<string> {
   if (!baseUrlPromise) {
-    baseUrlPromise = (async () => {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) return cached;
-      const configs = await fetchOssConfig();
-      if (!configs.length) {
-        throw new Error("OSS config is empty");
-      }
-      const { url } = configs[Math.floor(Math.random() * configs.length)];
-      localStorage.setItem(CACHE_KEY, url);
-      return url;
-    })();
+    baseUrlPromise = selectBestOssServer();
   }
   return baseUrlPromise;
+}
+
+export async function switchOssBaseUrl() {
+  baseUrlPromise = null;
+  return selectBestOssServer(true);
 }
