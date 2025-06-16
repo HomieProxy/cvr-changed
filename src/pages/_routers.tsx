@@ -10,6 +10,7 @@ import HomePage from "./home";
 import UnlockPage from "./unlock";
 import LoginPage from "./login";
 import SignupPage from "./signup";
+import { Navigate } from "react-router-dom";
 import { BaseErrorBoundary } from "@/components/base";
 
 import HomeSvg from "@/assets/image/itemicon/home.svg?react";
@@ -103,6 +104,12 @@ export const routers = [
 }));
 
 export const authRouters = [
+  {
+    label: "Root",
+    path: "/",
+    icon: [<PersonRoundedIcon />, <PersonRoundedIcon />],
+    element: <Navigate to="/login" replace />,
+  },
   {
     label: "Label-Login",
     path: "/login",
