@@ -633,5 +633,6 @@
   "Remind Traffic": "Remind Traffic",
   "Current Password": "Current Password",
   "New Password": "New Password",
-  "Label-Logout": "Logout"
+  "Label-Logout": "Logout",
+  "Connected Server": "Connected Server"
 }
