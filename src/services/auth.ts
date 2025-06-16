@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
-import { getOssBaseUrl } from "./domain_service";
+import { getOssBaseUrl, switchOssBaseUrl } from "./domain_service";
 
 interface ApiResponse<T> {
   status: string;
@@ -70,27 +70,59 @@ export function clearTokens() {
 }
 
 export async function login(payload: LoginPayload): Promise<LoginResponseData> {
-  const ins = await getAxios();
-  const res = await ins.post<
-    ApiResponse<LoginResponseData>,
-    ApiResponse<LoginResponseData>
-  >("/globalize/v1/passport/auth/login", payload);
-  const data = res.data;
-  saveTokens(data.token, data.auth_data);
-  return data;
+  let ins = await getAxios();
+  try {
+    const res = await ins.post<
+      ApiResponse<LoginResponseData>,
+      ApiResponse<LoginResponseData>
+    >("/globalize/v1/passport/auth/login", payload);
+    const data = res.data;
+    saveTokens(data.token, data.auth_data);
+    return data;
+  } catch (err: any) {
+    if (axios.isAxiosError(err) && !err.response) {
+      await switchOssBaseUrl();
+      instancePromise = null;
+      ins = await getAxios();
+      const res = await ins.post<
+        ApiResponse<LoginResponseData>,
+        ApiResponse<LoginResponseData>
+      >("/globalize/v1/passport/auth/login", payload);
+      const data = res.data;
+      saveTokens(data.token, data.auth_data);
+      return data;
+    }
+    throw err;
+  }
 }
 
 export async function signup(
   payload: SignupPayload,
 ): Promise<LoginResponseData> {
-  const ins = await getAxios();
-  const res = await ins.post<
-    ApiResponse<LoginResponseData>,
-    ApiResponse<LoginResponseData>
-  >("/globalize/v1/passport/auth/register", payload);
-  const data = res.data;
-  saveTokens(data.token, data.auth_data);
-  return data;
+  let ins = await getAxios();
+  try {
+    const res = await ins.post<
+      ApiResponse<LoginResponseData>,
+      ApiResponse<LoginResponseData>
+    >("/globalize/v1/passport/auth/register", payload);
+    const data = res.data;
+    saveTokens(data.token, data.auth_data);
+    return data;
+  } catch (err: any) {
+    if (axios.isAxiosError(err) && !err.response) {
+      await switchOssBaseUrl();
+      instancePromise = null;
+      ins = await getAxios();
+      const res = await ins.post<
+        ApiResponse<LoginResponseData>,
+        ApiResponse<LoginResponseData>
+      >("/globalize/v1/passport/auth/register", payload);
+      const data = res.data;
+      saveTokens(data.token, data.auth_data);
+      return data;
+    }
+    throw err;
+  }
 }
 
 export async function logout() {
