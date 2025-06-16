@@ -14,6 +14,7 @@ use once_cell::sync::OnceCell;
 use parking_lot::{Mutex, RwLock};
 use percent_encoding::percent_decode_str;
 use serde_yaml::Mapping;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::{
     sync::Arc,
     time::{Duration, Instant},
@@ -66,6 +67,13 @@ impl Default for UiReadyState {
 // 获取UI就绪状态细节
 static UI_READY_STATE: OnceCell<Arc<UiReadyState>> = OnceCell::new();
 
+// Ensure startup-completed event is only sent once
+static STARTUP_COMPLETED_SENT: OnceCell<AtomicBool> = OnceCell::new();
+
+fn startup_completed_flag() -> &'static AtomicBool {
+    STARTUP_COMPLETED_SENT.get_or_init(|| AtomicBool::new(false))
+}
+
 fn get_window_creating_lock() -> &'static Mutex<(bool, Instant)> {
     WINDOW_CREATING.get_or_init(|| Mutex::new((false, Instant::now())))
 }
@@ -74,12 +82,17 @@ fn get_ui_ready() -> &'static Arc<RwLock<bool>> {
     UI_READY.get_or_init(|| Arc::new(RwLock::new(false)))
 }
 
+/// Returns true if the UI has been marked ready
+pub fn is_ui_ready() -> bool {
+    *get_ui_ready().read()
+}
+
 fn get_ui_ready_state() -> &'static Arc<UiReadyState> {
     UI_READY_STATE.get_or_init(|| Arc::new(UiReadyState::default()))
 }
 
 // 更新UI准备阶段
-pub fn update_ui_ready_stage(stage: UiReadyStage) {
+pub fn update_ui_ready_stage(stage: UiReadyStage) -> Result<()> {
     let state = get_ui_ready_state();
     let mut stage_lock = state.stage.write();
     let mut time_lock = state.last_update.write();
@@ -100,6 +113,8 @@ pub fn update_ui_ready_stage(stage: UiReadyStage) {
     if stage == UiReadyStage::Ready {
         mark_ui_ready();
     }
+
+    Ok(())
 }
 
 // 标记UI已准备就绪
@@ -123,6 +138,20 @@ pub fn reset_ui_ready() {
         *time = Instant::now();
     }
     logging!(info, Type::Window, true, "UI就绪状态已重置");
+}
+
+/// Notify frontend that startup is completed exactly once
+pub fn notify_startup_completed_once() {
+    if startup_completed_flag().swap(true, Ordering::SeqCst) {
+        logging!(
+            warn,
+            Type::Window,
+            true,
+            "startup-completed event emitted more than once"
+        );
+    } else {
+        handle::Handle::notify_startup_completed();
+    }
 }
 
 pub async fn find_unused_port() -> Result<u16> {
@@ -299,7 +328,7 @@ pub fn create_window(is_show: bool) -> bool {
             true,
             "Not to create window when starting in silent mode"
         );
-        handle::Handle::notify_startup_completed();
+        notify_startup_completed_once();
         return false;
     }
 
@@ -394,7 +423,9 @@ pub fn create_window(is_show: bool) -> bool {
 
             *creating = (false, Instant::now());
 
-            update_ui_ready_stage(UiReadyStage::NotStarted);
+            if let Err(e) = update_ui_ready_stage(UiReadyStage::NotStarted) {
+                logging!(error, Type::Window, true, "初始化UI阶段失败: {}", e);
+            }
 
             AsyncHandler::spawn(move || async move {
                 handle::Handle::global().mark_startup_completed();
@@ -415,7 +446,7 @@ pub fn create_window(is_show: bool) -> bool {
                     true,
                     "发送 verge://startup-completed 事件"
                 );
-                handle::Handle::notify_startup_completed();
+                notify_startup_completed_once();
 
                 if is_show {
                     let window_clone = newly_created_window.clone();
